@@ -16,9 +16,6 @@ on:
 jobs:
 
   build:
-    env:
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      DOCKERHUB_PASSWD: ${{ secrets.DOCKERHUB_PASSWD }}
     steps:
     - uses: actions/checkout@v4
 
@@ -29,6 +26,9 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Check Docker Secrets
+      env:
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        DOCKERHUB_PASSWD: ${{ secrets.DOCKERHUB_PASSWD }}
       run: |
         echo "DOCKERHUB_TOKEN length: $(echo -n "$DOCKERHUB_TOKEN" | wc -c)"
         echo "DOCKERHUB_PASSWD length: $(echo -n "$DOCKERHUB_PASSWD" | wc -c)"
