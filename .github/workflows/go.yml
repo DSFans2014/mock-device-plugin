@@ -16,10 +16,6 @@ on:
 jobs:
   test-org-secrets:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      secrets: read
     steps:
     - name: Test Secret Accessibility
       run: |
