@@ -27,7 +27,7 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Check Docker Secrets
-      if: ${{ secrets.DOCKERHUB_TOKEN == '' || secrets.DOCKERHUB_PASSWD == '' }}
+      if: ${{ secrets.DOCKERHUB_TOKEN == null || secrets.DOCKERHUB_PASSWD == null }}
       run: |
         echo "❌ Missing docker secrets. Set DOCKERHUB_TOKEN and DOCKERHUB_PASSWD!"
         exit 1
