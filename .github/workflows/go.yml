@@ -16,7 +16,9 @@ on:
 jobs:
 
   build:
-    runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKERHUB_PASSWD: ${{ secrets.DOCKERHUB_PASSWD }}
     steps:
     - uses: actions/checkout@v4
 
@@ -28,20 +30,20 @@ jobs:
 
     - name: Check Docker Secrets
       run: |
-        echo "Checking Docker Hub secrets..."
-        if [ -z "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
-          echo "❌ DOCKERHUB_TOKEN is empty or not set"
-        else
-          echo "✅ DOCKERHUB_TOKEN is set (length: ${#DOCKERHUB_TOKEN} chars)"
-          echo "First few chars: ${DOCKERHUB_TOKEN:0:10}..."
-        fi
+        echo "DOCKERHUB_TOKEN length: $(echo -n "$DOCKERHUB_TOKEN" | wc -c)"
+        echo "DOCKERHUB_PASSWD length: $(echo -n "$DOCKERHUB_PASSWD" | wc -c)"
         
-        if [ -z "${{ secrets.DOCKERHUB_PASSWD }}" ]; then
-          echo "❌ DOCKERHUB_PASSWD is empty or not set"
-        else
-          echo "✅ DOCKERHUB_PASSWD is set (length: ${#DOCKERHUB_PASSWD} chars)"
-          echo "First few chars: ${DOCKERHUB_PASSWD:0:10}..."
+        if [ $(echo -n "$DOCKERHUB_TOKEN" | wc -c) -eq 0 ]; then
+          echo "❌ DOCKERHUB_TOKEN is empty"
+          exit 1
         fi
+
+        if [ $(echo -n "$DOCKERHUB_PASSWD" | wc -c) -eq 0 ]; then
+          echo "❌ DOCKERHUB_PASSWD is empty"
+          exit 1
+        fi
+    
+    echo "✅ Both secrets appear to be set"
 
     - name: Docker Login
       uses: docker/login-action@v3.6.0
