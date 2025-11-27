@@ -14,7 +14,27 @@ on:
     branches: [ "master" ]
 
 jobs:
-
+  test-org-secrets:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      secrets: read
+    steps:
+    - name: Test Secret Accessibility
+      run: |
+        echo "Testing Organization Secrets access..."
+        
+        # 测试每个 secret 是否可访问
+        secrets=("DOCKERHUB_TOKEN" "DOCKERHUB_PASSWD")
+        
+        for secret in "${secrets[@]}"; do
+          if [ -n "${{ secrets[secret] }}" ]; then
+            echo "✅ $secret is accessible (length: ${#{{ secrets[secret] }}})"
+          else
+            echo "❌ $secret is NOT accessible"
+          fi
+        done
   build:
     runs-on: ubuntu-latest
     steps:
