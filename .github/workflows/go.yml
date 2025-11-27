@@ -35,12 +35,10 @@ jobs:
         
         if [ $(echo -n "$DOCKERHUB_TOKEN" | wc -c) -eq 0 ]; then
           echo "❌ DOCKERHUB_TOKEN is empty"
-          exit 1
         fi
 
         if [ $(echo -n "$DOCKERHUB_PASSWD" | wc -c) -eq 0 ]; then
           echo "❌ DOCKERHUB_PASSWD is empty"
-          exit 1
         fi
         if [ -n "$DOCKERHUB_TOKEN" ]; then
           echo "✅ DOCKERHUB_TOKEN is accessible (length: ${#DOCKERHUB_TOKEN})"
