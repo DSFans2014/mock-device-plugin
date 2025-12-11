@@ -18,34 +18,19 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+      - name: Build
+        run: go build -o ./k8s-device-plugin cmd/k8s-device-plugin/main.go
 
-      - name: Check Docker Secrets
-        env:
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          DOCKERHUB_PASSWD: ${{ secrets.DOCKERHUB_PASSWD }}
-        run: |
-          echo "DOCKERHUB_TOKEN length: $(echo -n "$DOCKERHUB_TOKEN" | wc -c)"
-          echo "DOCKERHUB_PASSWD length: $(echo -n "$DOCKERHUB_PASSWD" | wc -c)"
-          
-          if [ $(echo -n "$DOCKERHUB_TOKEN" | wc -c) -eq 0 ]; then
-            echo "❌ DOCKERHUB_TOKEN is empty"
-          fi
+  docker_build:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
 
-          if [ $(echo -n "$DOCKERHUB_PASSWD" | wc -c) -eq 0 ]; then
-            echo "❌ DOCKERHUB_PASSWD is empty"
-          fi
-          if [ -n "$DOCKERHUB_TOKEN" ]; then
-            echo "✅ DOCKERHUB_TOKEN is accessible (length: ${#DOCKERHUB_TOKEN})"
-          else
-            echo "❌ DOCKERHUB_TOKEN is NOT accessible"
-          fi
-          
-          if [ -n "$DOCKERHUB_PASSWD" ]; then
-            echo "✅ DOCKERHUB_PASSWD is accessible (length: ${#DOCKERHUB_PASSWD})"
-          else
-            echo "❌ DOCKERHUB_PASSWD is NOT accessible"
-          fi
-      
       - name: Docker Login
         uses: docker/login-action@v3.6.0
         with:
